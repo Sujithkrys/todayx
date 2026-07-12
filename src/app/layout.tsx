@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { RootProvider } from '@/providers/root-provider';
 import { Toaster } from 'sonner';
-import { ClerkProvider } from '@clerk/nextjs';
 import { MockAuthProvider } from '@/providers/mock-auth-provider';
 import './globals.css';
 
@@ -26,8 +25,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
   const content = (
     <RootProvider>
       {children}
@@ -38,11 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}>
-        {CLERK_KEY ? (
-          <ClerkProvider>{content}</ClerkProvider>
-        ) : (
-          <MockAuthProvider>{content}</MockAuthProvider>
-        )}
+        <MockAuthProvider>{content}</MockAuthProvider>
       </body>
     </html>
   );

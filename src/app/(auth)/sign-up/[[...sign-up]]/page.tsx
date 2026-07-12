@@ -1,8 +1,19 @@
-import React from 'react';
-import { SignUp } from '@clerk/nextjs';
-import { Sparkles, Activity } from 'lucide-react';
+'use client';
+
+import React, { useState } from 'react';
+import { Sparkles, Activity, ArrowRight, Loader2 } from 'lucide-react';
+import { useAppAuth } from '@/providers/app-auth-provider';
 
 export default function SignUpPage() {
+  const { signIn } = useAppAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSkip = async () => {
+    setIsLoading(true);
+    // Use the mock auth's dummy credentials
+    await signIn('admin@example.com', 'password123');
+  };
+
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-background">
       {/* Left Panel: Hero Panel matching design system */}
@@ -20,7 +31,7 @@ export default function SignUpPage() {
         <div className="space-y-4 relative z-10 max-w-md">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs text-indigo-200">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Secure Clerk Auth Active</span>
+            <span>Local Development Mode</span>
           </div>
           <h1 className="text-4xl font-medium tracking-tight text-white leading-tight">
             Get started<br />
@@ -36,20 +47,34 @@ export default function SignUpPage() {
         </div>
       </div>
 
-      {/* Right Panel: Clerk SignUp Form */}
+      {/* Right Panel: Custom SignUp Form */}
       <div className="flex items-center justify-center p-6 lg:p-12">
-        <SignUp
-          appearance={{
-            elements: {
-              card: 'border-0 shadow-none bg-transparent',
-              headerTitle: 'text-2xl font-bold text-foreground',
-              headerSubtitle: 'text-muted-foreground',
-              socialButtonsBlockButton: 'border hover:bg-muted/50 text-foreground transition-all',
-              formButtonPrimary: 'bg-[#030213] text-white hover:bg-indigo-700 transition-colors',
-              footerActionLink: 'text-indigo-600 hover:text-indigo-500',
-            },
-          }}
-        />
+        <div className="max-w-sm w-full space-y-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">Create an Account</h2>
+            <p className="text-sm text-muted-foreground mt-2">Sign up to your workspace to continue.</p>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <button
+              onClick={handleSkip}
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-2 bg-[#030213] hover:bg-indigo-700 text-white py-2.5 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  Skip Login & Continue to Dashboard
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+            <p className="text-xs text-center text-muted-foreground">
+              This will bypass authentication and log you in as a mock user for local development.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

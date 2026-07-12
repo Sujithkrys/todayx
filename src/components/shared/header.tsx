@@ -2,11 +2,8 @@
 
 import * as React from 'react';
 import { useAppAuth } from '@/providers/app-auth-provider';
-import { UserButton } from '@clerk/nextjs';
 import { Search, Bell } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
-
-const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 export function Header() {
   const { user } = useAppAuth();
@@ -41,24 +38,14 @@ export function Header() {
         {/* Theme Switching Trigger */}
         <ThemeToggle />
 
-        {/* User profile dropdown (Clerk User Button if available, else simple Avatar) */}
+        {/* User profile avatar */}
         <div className="flex items-center shrink-0">
-          {CLERK_KEY ? (
-            <UserButton
-              afterSignOutUrl="/sign-in"
-              appearance={{
-                elements: {
-                  avatarBox: 'w-8 h-8 rounded-full border border-border',
-                },
-              }}
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold flex items-center justify-center text-xs">
-              {user?.firstName?.charAt(0) || 'U'}
-            </div>
-          )}
+          <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold flex items-center justify-center text-xs">
+            {user?.firstName?.charAt(0) || 'U'}
+          </div>
         </div>
       </div>
     </header>
   );
 }
+
