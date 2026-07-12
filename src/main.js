@@ -1,10 +1,22 @@
 import './styles/design-system.css';
 import './styles/auth.css';
+import { ConvexClient } from 'convex/browser';
+import { api } from '../convex/_generated/api';
 
 // ============================================
 // Databolt — Authentication Page
-// Matches Voicera reference exactly
+// Convex Backend Integration
 // ============================================
+
+// --- Convex Client ---
+const CONVEX_URL = import.meta.env.VITE_CONVEX_URL;
+let client = null;
+
+if (CONVEX_URL) {
+  client = new ConvexClient(CONVEX_URL);
+} else {
+  console.warn('VITE_CONVEX_URL not set. Auth will run in demo mode.');
+}
 
 const app = document.querySelector('#app');
 
@@ -314,20 +326,42 @@ function attachListeners() {
   // Google button
   const googleBtn = document.getElementById('google-btn');
   if (googleBtn) {
-    googleBtn.addEventListener('click', () => {
-      // Placeholder — integrate with your auth provider
-      successMsg = 'Google sign-in initiated...';
-      errorMsg = '';
-      render();
+    googleBtn.addEventListener('click', async () => {
+      if (!client) {
+        successMsg = '✓ [Demo] Google Sign In triggered.';
+        errorMsg = '';
+        render();
+        return;
+      }
+      try {
+        isLoading = true;
+        render();
+        const result = await client.action(api.auth.signIn, { provider: 'google' });
+        if (result && result.redirect) {
+          window.location.href = result.redirect;
+        } else {
+          throw new Error('No redirect URL returned from Convex.');
+        }
+      } catch (err) {
+        isLoading = false;
+        errorMsg = err.message || 'Google Sign In failed.';
+        render();
+      }
     });
   }
 }
 
-// --- Form Handlers ---
-function handleFormSubmit(e) {
+// --- Convex Auth Handlers ---
+async function handleFormSubmit(e) {
   const formData = new FormData(e.target);
   errorMsg = '';
   successMsg = '';
+
+  // If Convex is not configured, run in demo mode
+  if (!client) {
+    handleDemoMode(formData, e.target);
+    return;
+  }
 
   if (activeTab === 'signUp') {
     const password = formData.get('password');
@@ -337,13 +371,131 @@ function handleFormSubmit(e) {
       render();
       return;
     }
-    // Simulate sign up
+
+    isLoading = true;
+    render();
+
+    try {
+      await client.action(api.auth.signIn, {
+        provider: 'password',
+        params: {
+          email: formData.get('email'),
+          password: formData.get('password'),
+          name: formData.get('fullName'),
+          flow: 'signUp',
+        },
+      });
+
+      isLoading = false;
+      successMsg = '✓ Account created successfully! You are now signed in.';
+      render();
+    } catch (err) {
+      isLoading = false;
+      errorMsg = err.message || 'Failed to create account. Please try again.';
+      render();
+    }
+
+  } else if (activeTab === 'signIn') {
+    isLoading = true;
+    render();
+
+    try {
+      await client.action(api.auth.signIn, {
+        provider: 'password',
+        params: {
+          email: formData.get('email'),
+          password: formData.get('password'),
+          flow: 'signIn',
+        },
+      });
+
+      isLoading = false;
+      successMsg = '✓ Signed in successfully! Redirecting...';
+      render();
+    } catch (err) {
+      isLoading = false;
+      errorMsg = err.message || 'Invalid email or password.';
+      render();
+    }
+
+  } else if (activeTab === 'reset') {
+    const email = formData.get('email');
+    if (!email) {
+      errorMsg = 'Please enter your work email.';
+      render();
+      return;
+    }
+
+    isLoading = true;
+    render();
+
+    try {
+      await client.action(api.auth.signIn, {
+        provider: 'password',
+        params: {
+          email: email,
+          flow: 'reset',
+        },
+      });
+
+      isLoading = false;
+      successMsg = 'Password reset email sent. Check your inbox.';
+      render();
+    } catch (err) {
+      isLoading = false;
+      errorMsg = err.message || 'Unable to send reset email. Please try again.';
+      render();
+    }
+
+  } else if (activeTab === 'newPassword') {
+    const password = formData.get('password');
+    const confirm = formData.get('confirm');
+    if (password !== confirm) {
+      errorMsg = 'Passwords do not match.';
+      render();
+      return;
+    }
+
+    isLoading = true;
+    render();
+
+    try {
+      await client.action(api.auth.signIn, {
+        provider: 'password',
+        params: {
+          password: password,
+          flow: 'reset-verification',
+        },
+      });
+
+      isLoading = false;
+      successMsg = '✓ Password updated successfully! You can now sign in.';
+      activeTab = 'signIn';
+      render();
+    } catch (err) {
+      isLoading = false;
+      errorMsg = err.message || 'Unable to update password. Please try again.';
+      render();
+    }
+  }
+}
+
+// --- Demo Mode (when VITE_CONVEX_URL is not set) ---
+function handleDemoMode(formData, formEl) {
+  if (activeTab === 'signUp') {
+    const password = formData.get('password');
+    const confirm = formData.get('confirm');
+    if (password !== confirm) {
+      errorMsg = 'Passwords do not match.';
+      render();
+      return;
+    }
     isLoading = true;
     render();
     setTimeout(() => {
       isLoading = false;
-      successMsg = '✓ Account created! Please check your email to activate your account.';
-      e.target.reset();
+      successMsg = '✓ [Demo] Account created! Run `npx convex dev` to enable real auth.';
+      formEl.reset();
       render();
     }, 1500);
 
@@ -352,7 +504,7 @@ function handleFormSubmit(e) {
     render();
     setTimeout(() => {
       isLoading = false;
-      successMsg = '✓ Signed in successfully! Redirecting...';
+      successMsg = '✓ [Demo] Signed in! Run `npx convex dev` to enable real auth.';
       render();
     }, 1500);
 
@@ -367,7 +519,7 @@ function handleFormSubmit(e) {
     render();
     setTimeout(() => {
       isLoading = false;
-      successMsg = 'Password reset email sent. Check your inbox.';
+      successMsg = '[Demo] Password reset email sent. Run `npx convex dev` to enable real auth.';
       render();
     }, 1500);
 
@@ -383,7 +535,7 @@ function handleFormSubmit(e) {
     render();
     setTimeout(() => {
       isLoading = false;
-      successMsg = '✓ Password updated successfully! You can now sign in.';
+      successMsg = '✓ [Demo] Password updated! Run `npx convex dev` to enable real auth.';
       activeTab = 'signIn';
       render();
     }, 1500);
