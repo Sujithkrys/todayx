@@ -1,22 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@clerk/nextjs';
+import { useConvexAuth } from 'convex/react';
 import { useMutation } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 
 export function SyncUser() {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoading, isAuthenticated } = useConvexAuth();
   const storeUser = useMutation(api.users.store);
   const [hasSynced, setHasSynced] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && isSignedIn && !hasSynced) {
+    if (!isLoading && isAuthenticated && !hasSynced) {
       storeUser()
         .then(() => setHasSynced(true))
         .catch(console.error);
     }
-  }, [isLoaded, isSignedIn, hasSynced, storeUser]);
+  }, [isLoading, isAuthenticated, hasSynced, storeUser]);
 
   return null;
 }
