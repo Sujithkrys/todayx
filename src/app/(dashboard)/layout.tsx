@@ -1,6 +1,5 @@
 import React from 'react';
 import { Sidebar } from '@/components/shared/sidebar';
-import { Header } from '@/components/shared/header';
 
 export default function DashboardLayout({
   children,
@@ -13,12 +12,9 @@ export default function DashboardLayout({
       <Sidebar />
 
       {/* Main Workspace Frame */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Navigation */}
-        <Header />
-
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white">
         {/* Scrollable View Area */}
-        <main className="flex-1 overflow-y-auto bg-muted/20 relative focus:outline-none">
+        <main className="flex-1 overflow-y-auto relative focus:outline-none p-6">
           {children}
         </main>
       </div>
