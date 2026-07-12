@@ -23,6 +23,7 @@ import { usePathname } from 'next/navigation';
 export function Sidebar() {
   const pathname = usePathname();
   const { user, signOut } = useAppAuth();
+  const [chatExpanded, setChatExpanded] = React.useState(true);
 
   return (
     <aside className="w-[260px] flex flex-col h-full bg-white border-r border-gray-100 text-gray-700 font-sans shadow-sm shrink-0">
