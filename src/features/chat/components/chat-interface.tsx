@@ -1,5 +1,5 @@
 import React from 'react';
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
 import { ChatMessage } from './chat-message';
 import { ChatInput } from './chat-input';
 import { Bot, MessageSquarePlus } from 'lucide-react';
