@@ -7,8 +7,11 @@ import { ChatInput } from './chat-input';
 import { Bot, MessageSquarePlus } from 'lucide-react';
 
 export function ChatInterface() {
+  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || '';
+  const apiEndpoint = convexUrl ? convexUrl.replace('.cloud', '.site') + '/api/chat' : '/api/chat';
+
   const { messages, input, handleInputChange, handleSubmit, isLoading, stop } = useChat({
-    api: '/api/chat',
+    api: apiEndpoint,
     initialMessages: [],
   });
 
