@@ -1,22 +1,55 @@
 'use client';
 
-import React from 'react';
-import { Mail, AlertCircle, AlertOctagon, Archive, Search, MoreHorizontal, Inbox as InboxIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Mail, AlertCircle, AlertOctagon, Archive, Search, MoreHorizontal, Inbox as InboxIcon, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EmailList } from './email-list';
 import { EmailDetail } from './email-detail';
-
-export type Category = 'important' | 'others' | 'spam';
+import { fetchEmails, EmailData, GmailCategory } from '@/app/actions/gmail';
 
 export function InboxLayout() {
-  const [activeCategory, setActiveCategory] = React.useState<Category>('important');
-  const [selectedEmailId, setSelectedEmailId] = React.useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<GmailCategory>('important');
+  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
+  
+  const [emails, setEmails] = useState<EmailData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    async function loadEmails() {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const fetchedEmails = await fetchEmails(activeCategory);
+        if (isMounted) {
+          setEmails(fetchedEmails);
+        }
+      } catch (err: any) {
+        if (isMounted) {
+          setError(err.message || 'Failed to fetch emails');
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadEmails();
+    return () => {
+      isMounted = false;
+    };
+  }, [activeCategory]);
 
   const categories = [
-    { id: 'important', label: 'Important', icon: AlertCircle, count: 3 },
-    { id: 'others', label: 'Others', icon: InboxIcon, count: 12 },
-    { id: 'spam', label: 'Spam', icon: AlertOctagon, count: 5 },
+    { id: 'important', label: 'Important', icon: AlertCircle, count: activeCategory === 'important' ? emails.length : 0 },
+    { id: 'others', label: 'Others', icon: InboxIcon, count: activeCategory === 'others' ? emails.length : 0 },
+    { id: 'spam', label: 'Spam', icon: AlertOctagon, count: activeCategory === 'spam' ? emails.length : 0 },
   ] as const;
+
+  const selectedEmail = emails.find(e => e.id === selectedEmailId);
 
   return (
     <div className="flex h-full bg-white overflow-hidden rounded-xl border border-gray-100 shadow-sm">
@@ -38,8 +71,8 @@ export function InboxLayout() {
               <button
                 key={cat.id}
                 onClick={() => {
-                  setActiveCategory(cat.id);
-                  setSelectedEmailId(null); // Reset selection on category change
+                  setActiveCategory(cat.id as GmailCategory);
+                  setSelectedEmailId(null);
                 }}
                 className={cn(
                   "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[13px] font-medium transition-colors",
@@ -52,7 +85,7 @@ export function InboxLayout() {
                   <Icon className={cn("w-4 h-4", isActive ? "text-gray-900" : "text-gray-400")} />
                   {cat.label}
                 </div>
-                {cat.count > 0 && (
+                {isActive && (
                   <span className={cn(
                     "text-[10px] font-bold px-1.5 py-0.5 rounded-full",
                     isActive ? "bg-white shadow-sm text-gray-900" : "bg-gray-100 text-gray-500"
@@ -71,11 +104,23 @@ export function InboxLayout() {
         "flex flex-col border-r border-gray-100 transition-all duration-300",
         selectedEmailId ? "hidden lg:flex w-80 shrink-0" : "flex-1"
       )}>
-        <EmailList 
-          category={activeCategory} 
-          selectedEmailId={selectedEmailId}
-          onSelectEmail={setSelectedEmailId} 
-        />
+        {isLoading ? (
+          <div className="flex items-center justify-center flex-1 h-full flex-col gap-3 text-gray-400">
+            <Loader2 className="w-6 h-6 animate-spin" />
+            <span className="text-sm">Fetching from Gmail...</span>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center flex-1 h-full px-6 text-center text-red-500">
+            <span className="text-sm">{error}</span>
+          </div>
+        ) : (
+          <EmailList 
+            category={activeCategory} 
+            selectedEmailId={selectedEmailId}
+            onSelectEmail={setSelectedEmailId} 
+            emails={emails}
+          />
+        )}
       </div>
 
       {/* Email Detail Pane */}
@@ -83,8 +128,8 @@ export function InboxLayout() {
         "flex-1 min-w-0 bg-white",
         !selectedEmailId ? "hidden lg:flex items-center justify-center bg-gray-50/50" : "flex flex-col"
       )}>
-        {selectedEmailId ? (
-          <EmailDetail emailId={selectedEmailId} onClose={() => setSelectedEmailId(null)} />
+        {selectedEmail ? (
+          <EmailDetail email={selectedEmail} onClose={() => setSelectedEmailId(null)} />
         ) : (
           <div className="text-center">
             <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4 text-gray-400">
