@@ -3,25 +3,28 @@ import { NextResponse } from 'next/server';
 
 const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-// 1. Define the routes we want to protect (SaaS dashboard + settings)
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
   '/settings(.*)',
   '/profile(.*)',
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
-  // If Clerk is not set up, completely bypass middleware route protection
-  if (!CLERK_KEY) {
-    return NextResponse.next();
-  }
+// Initialize Clerk middleware only if the publishable key is present
+const clerkHandler = CLERK_KEY
+  ? clerkMiddleware(async (auth, req) => {
+      const authObj = await auth();
+      if (!authObj.userId && isProtectedRoute(req)) {
+        return authObj.redirectToSignIn({ returnBackUrl: req.url });
+      }
+    })
+  : null;
 
-  // 2. Protect matching routes by redirecting unauthenticated users to sign-in page
-  const authObj = await auth();
-  if (!authObj.userId && isProtectedRoute(req)) {
-    return authObj.redirectToSignIn({ returnBackUrl: req.url });
+export default function middleware(req: any, event: any) {
+  if (clerkHandler) {
+    return clerkHandler(req, event);
   }
-});
+  return NextResponse.next();
+}
 
 // 3. Configure matcher to ignore internals and static files
 export const config = {
