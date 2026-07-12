@@ -14,13 +14,14 @@ interface AppAuthContextType {
   user: AppUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  signIn: (email: string, password: string) => Promise<boolean>;
   signOut: () => Promise<void>;
 }
 
 const AppAuthContext = createContext<AppAuthContextType | null>(null);
 
 export function AppAuthProvider({ children }: { children: React.ReactNode }) {
-  const { user, isAuthenticated, isLoading, signOut } = useMockAuth();
+  const { user, isAuthenticated, isLoading, signIn, signOut } = useMockAuth();
 
   const appUser = user
     ? {
@@ -37,6 +38,7 @@ export function AppAuthProvider({ children }: { children: React.ReactNode }) {
         user: appUser,
         isAuthenticated,
         isLoading,
+        signIn,
         signOut,
       }}
     >
