@@ -65,6 +65,32 @@ export function Sidebar() {
             <Newspaper className="w-[18px] h-[18px] stroke-[1.5]" />
             News
           </Link>
+
+          {/* AI Chat Collapsible */}
+          <div className="pt-1">
+            <button
+              onClick={() => setChatExpanded(!chatExpanded)}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-md text-[13px] font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <Sparkles className="w-[18px] h-[18px] stroke-[1.5]" />
+                AI Chat
+              </div>
+              {chatExpanded ? <ChevronUp className="w-3.5 h-3.5 text-gray-400" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-400" />}
+            </button>
+            {chatExpanded && (
+              <div className="pl-9 space-y-0.5 mt-0.5">
+                <Link href="/dashboard/chat/new" className={cn("flex items-center gap-2.5 px-3 py-1.5 text-[13px] transition-colors", pathname === '/dashboard/chat/new' ? "text-gray-900 font-semibold" : "text-gray-500 hover:text-gray-900")}>
+                  <Plus className="w-3.5 h-3.5" />
+                  New Chat
+                </Link>
+                <Link href="/dashboard/chat/history" className={cn("flex items-center gap-2.5 px-3 py-1.5 text-[13px] transition-colors", pathname === '/dashboard/chat/history' ? "text-gray-900 font-semibold" : "text-gray-500 hover:text-gray-900")}>
+                  <History className="w-3.5 h-3.5" />
+                  History
+                </Link>
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* System Section */}
