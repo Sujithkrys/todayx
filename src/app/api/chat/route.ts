@@ -23,8 +23,9 @@ You can answer general questions and help users understand their dashboard data.
 
   const result = streamText({
     model: openai('gpt-4o-mini'),
-    messages: [systemMessage, ...messages],
+    system: systemMessage.content,
+    messages: messages,
   });
 
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 }
