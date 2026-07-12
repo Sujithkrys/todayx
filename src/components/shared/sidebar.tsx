@@ -13,6 +13,9 @@ import {
   Settings,
   Sparkles,
   ChevronDown,
+  ChevronUp,
+  Plus,
+  History,
   LogOut,
   PanelLeftClose
 } from 'lucide-react';
