@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Mail, AlertCircle, AlertOctagon, Archive, Search, MoreHorizontal, Inbox as InboxIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';

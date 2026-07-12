@@ -1,3 +1,5 @@
+'use client';
+
 import React, { FormEvent, useRef, useEffect } from 'react';
 import { Send, Square, Paperclip, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
