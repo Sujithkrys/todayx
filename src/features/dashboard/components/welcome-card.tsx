@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useAppAuth } from '@/providers/app-auth-provider';
+import { useUser } from '@clerk/nextjs';
 import { Sparkles, Calendar } from 'lucide-react';
 
 export function WelcomeCard() {
-  const { user } = useAppAuth();
+  const { user } = useUser();
   
   // Format current date nicely
   const currentDate = new Date().toLocaleDateString('en-US', {

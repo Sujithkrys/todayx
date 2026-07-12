@@ -1,22 +1,22 @@
 'use client';
 
 import React from 'react';
-import { Message } from 'ai';
+import { UIMessage } from '@ai-sdk/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { Bot, User, Copy, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAppAuth } from '@/providers/app-auth-provider';
+import { useUser } from '@clerk/nextjs';
 
 interface ChatMessageProps {
-  message: Message;
+  message: UIMessage;
 }
 
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
-  const { user } = useAppAuth();
+  const { user } = useUser();
   
   const [copied, setCopied] = React.useState<string | null>(null);
 
@@ -25,6 +25,8 @@ export function ChatMessage({ message }: ChatMessageProps) {
     setCopied(id);
     setTimeout(() => setCopied(null), 2000);
   };
+
+  const messageText = message.parts?.find(p => p.type === 'text')?.text || '';
 
   return (
     <div className={cn("flex gap-4 w-full group", isUser ? "flex-row-reverse" : "flex-row")}>
@@ -48,9 +50,6 @@ export function ChatMessage({ message }: ChatMessageProps) {
       )}>
         <div className="flex items-center gap-2 px-1">
           <span className="text-xs font-semibold text-gray-700">{isUser ? 'You' : 'Voicera AI'}</span>
-          <span className="text-[10px] text-gray-400">
-            {message.createdAt ? new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-          </span>
         </div>
 
         <div className={cn(
@@ -60,7 +59,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             : "bg-white border border-gray-100 shadow-sm text-gray-800 rounded-2xl rounded-tl-sm prose prose-sm prose-gray max-w-none"
         )}>
           {isUser ? (
-            <div className="whitespace-pre-wrap">{message.content}</div>
+            <div className="whitespace-pre-wrap">{messageText}</div>
           ) : (
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
@@ -119,7 +118,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
                 }
               }}
             >
-              {message.content}
+              {messageText}
             </ReactMarkdown>
           )}
         </div>

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { RootProvider } from '@/providers/root-provider';
 import { Toaster } from 'sonner';
-import { MockAuthProvider } from '@/providers/mock-auth-provider';
+import { ConvexClientProvider } from '@/providers/convex-client-provider';
 import './globals.css';
 
 const geistSans = Geist({
@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`} suppressHydrationWarning>
-        <MockAuthProvider>{content}</MockAuthProvider>
+        <ConvexClientProvider>{content}</ConvexClientProvider>
       </body>
     </html>
   );

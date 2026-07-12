@@ -38,6 +38,7 @@ import type * as tasks_internal from "../tasks/internal.js";
 import type * as tasks_mutations from "../tasks/mutations.js";
 import type * as tasks_queries from "../tasks/queries.js";
 import type * as tasks_validators from "../tasks/validators.js";
+import type * as users from "../users.js";
 import type * as users_internal from "../users/internal.js";
 import type * as users_mutations from "../users/mutations.js";
 import type * as users_queries from "../users/queries.js";
@@ -84,6 +85,7 @@ declare const fullApi: ApiFromModules<{
   "tasks/mutations": typeof tasks_mutations;
   "tasks/queries": typeof tasks_queries;
   "tasks/validators": typeof tasks_validators;
+  users: typeof users;
   "users/internal": typeof users_internal;
   "users/mutations": typeof users_mutations;
   "users/queries": typeof users_queries;

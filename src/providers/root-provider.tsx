@@ -1,22 +1,20 @@
 'use client';
 
-import { ThemeProvider } from './theme-provider';
-import { QueryProvider } from './query-provider';
-import { AppAuthProvider } from './app-auth-provider';
+import { ReactNode } from 'react';
+import { ThemeProvider } from 'next-themes';
+import { ConvexClientProvider } from './convex-client-provider';
 
-export function RootProvider({ children }: { children: React.ReactNode }) {
+export function RootProvider({ children }: { children: ReactNode }) {
   return (
-    <AppAuthProvider>
-      <QueryProvider>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </QueryProvider>
-    </AppAuthProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <ConvexClientProvider>
+        {children}
+      </ConvexClientProvider>
+    </ThemeProvider>
   );
 }

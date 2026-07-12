@@ -1,13 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { useAppAuth } from '@/providers/app-auth-provider';
+import { UserButton } from '@clerk/nextjs';
 import { Search, Bell } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 
 export function Header() {
-  const { user } = useAppAuth();
-
   return (
     <header className="h-16 border-b bg-card text-card-foreground flex items-center justify-between px-6 shadow-sm shrink-0">
       {/* Search Input Bar (Command-K Trigger Placeholder) */}
@@ -40,9 +38,7 @@ export function Header() {
 
         {/* User profile avatar */}
         <div className="flex items-center shrink-0">
-          <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold flex items-center justify-center text-xs">
-            {user?.firstName?.charAt(0) || 'U'}
-          </div>
+          <UserButton />
         </div>
       </div>
     </header>

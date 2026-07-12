@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { useAppAuth } from '@/providers/app-auth-provider';
 import {
   Home,
   Inbox,
@@ -22,10 +21,12 @@ import {
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useUser, useClerk } from '@clerk/nextjs';
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { user, signOut } = useAppAuth();
+  const { user } = useUser();
+  const { signOut } = useClerk();
   const [chatExpanded, setChatExpanded] = React.useState(true);
 
   return (

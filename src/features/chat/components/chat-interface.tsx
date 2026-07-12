@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 import { ChatMessage } from './chat-message';
 import { ChatInput } from './chat-input';
 import { Bot, MessageSquarePlus } from 'lucide-react';
@@ -10,10 +11,26 @@ export function ChatInterface() {
   const siteUrl = process.env.NEXT_PUBLIC_CONVEX_SITE_URL || '';
   const apiEndpoint = siteUrl ? `${siteUrl}/api/chat` : '/api/chat';
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, stop } = useChat({
-    api: apiEndpoint,
-    initialMessages: [],
+  const [input, setInput] = useState('');
+  
+  const { messages, status, stop, sendMessage } = useChat({
+    transport: new DefaultChatTransport({
+      api: apiEndpoint,
+    })
   });
+  
+  const isLoading = status === 'submitted' || status === 'streaming';
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+  };
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    sendMessage({ role: 'user', parts: [{ type: 'text', text: input }] });
+    setInput('');
+  };
 
   const chatContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -22,7 +39,7 @@ export function ChatInterface() {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, status]);
 
   const suggestedPrompts = [
     "What tasks are assigned to me today?",
