@@ -24,7 +24,7 @@ export function ChatInput({ input, handleInputChange, handleSubmit, isLoading, s
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (input.trim()) {
+      if ((input || '').trim()) {
         handleSubmit(e as unknown as FormEvent<HTMLFormElement>);
       }
     }
@@ -61,7 +61,7 @@ export function ChatInput({ input, handleInputChange, handleSubmit, isLoading, s
           >
             <Square className="w-4.5 h-4.5 fill-current" />
           </button>
-        ) : input.trim() ? (
+        ) : (input || '').trim() ? (
           <button 
             type="submit"
             className="p-2 rounded-xl bg-gray-900 text-white hover:bg-gray-800 transition-colors shadow-sm"
