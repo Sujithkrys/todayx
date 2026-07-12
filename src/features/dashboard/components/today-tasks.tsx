@@ -26,38 +26,38 @@ export function TodayTasks() {
   };
 
   return (
-    <div className="rounded-xl border bg-card text-card-foreground p-6 shadow-sm space-y-4">
+    <div className="rounded-lg border border-gray-100 bg-white p-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-base leading-none">Today's Tasks</h2>
-        <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full font-medium text-muted-foreground">
+        <h2 className="font-semibold text-[15px] text-gray-900 leading-none">Today's Tasks</h2>
+        <span className="text-[10px] bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-full font-medium text-gray-500">
           {tasks.filter((t) => !t.completed).length} pending
         </span>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-0">
         {tasks.map((task) => (
           <div
             key={task.id}
             onClick={() => toggleTask(task.id)}
-            className="flex items-center justify-between p-3 rounded-lg border bg-background/50 hover:bg-muted/40 transition-colors cursor-pointer select-none"
+            className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors cursor-pointer select-none"
           >
             <div className="flex items-center gap-3">
               {task.completed ? (
-                <CheckCircle2 className="w-4.5 h-4.5 text-primary shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-gray-400 shrink-0" />
               ) : (
-                <Circle className="w-4.5 h-4.5 text-muted-foreground shrink-0" />
+                <Circle className="w-4 h-4 text-gray-300 shrink-0" />
               )}
-              <span className={`text-xs font-medium ${task.completed ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
+              <span className={`text-[13px] font-medium ${task.completed ? 'line-through text-gray-400' : 'text-gray-700'}`}>
                 {task.title}
               </span>
             </div>
             
-            <span className={`text-[9px] uppercase font-semibold tracking-wider px-1.5 py-0.5 rounded ${
+            <span className={`text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded ${
               task.priority === 'high'
-                ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/20'
+                ? 'bg-rose-50 text-rose-600 border border-rose-100/50'
                 : task.priority === 'medium'
-                ? 'bg-amber-50 text-amber-600 dark:bg-amber-950/20'
-                : 'bg-slate-100 text-slate-600 dark:bg-slate-800'
+                ? 'bg-amber-50 text-amber-600 border border-amber-100/50'
+                : 'bg-gray-50 text-gray-500 border border-gray-100/50'
             }`}>
               {task.priority}
             </span>
