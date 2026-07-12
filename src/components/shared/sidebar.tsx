@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useClerk, useUser } from '@clerk/nextjs';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAppAuth } from '@/providers/app-auth-provider';
 import {
   LayoutDashboard,
   MessageSquare,
@@ -48,8 +48,7 @@ export function Sidebar() {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = React.useState(false);
   const pathname = usePathname();
-  const { user } = useUser();
-  const { signOut } = useClerk();
+  const { user, signOut } = useAppAuth();
 
   // Listen to keyboard shortcut (Ctrl + B) to toggle sidebar collapse
   React.useEffect(() => {
@@ -189,7 +188,7 @@ export function Sidebar() {
                   {user?.fullName || 'Active User'}
                 </span>
                 <span className="text-[10px] text-muted-foreground truncate">
-                  {user?.primaryEmailAddress?.emailAddress || 'user@email.com'}
+                  {user?.email || 'user@email.com'}
                 </span>
               </div>
             )}
