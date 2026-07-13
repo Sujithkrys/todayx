@@ -16,7 +16,8 @@ import {
   Plus,
   History,
   LogOut,
-  PanelLeftClose
+  PanelLeftClose,
+  BotMessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -78,7 +79,7 @@ export function Sidebar() {
               className="w-full flex items-center justify-between px-3 py-2 rounded-md text-[13px] font-medium text-gray-600 hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <Sparkles className="w-[18px] h-[18px] stroke-[1.5]" />
+                <BotMessageSquare className="w-[18px] h-[18px] stroke-[1.5]" />
                 AI Chat
               </div>
               {chatExpanded ? <ChevronUp className="w-3.5 h-3.5 text-gray-400" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-400" />}
