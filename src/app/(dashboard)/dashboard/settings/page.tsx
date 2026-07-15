@@ -88,7 +88,7 @@ export default function SettingsPage() {
                   <tbody className="divide-y divide-gray-100 bg-white">
                     <tr className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-4 py-3 text-gray-600">Jul 14, 2026</td>
-                      <td className="px-4 py-3 font-medium text-gray-900">$29.00</td>
+                      <td className="px-4 py-3 font-medium text-gray-900">₹2,400.00</td>
                       <td className="px-4 py-3">
                         <span className="px-2 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium border border-green-100">Paid</span>
                       </td>
@@ -100,7 +100,7 @@ export default function SettingsPage() {
                     </tr>
                     <tr className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-4 py-3 text-gray-600">Jun 14, 2026</td>
-                      <td className="px-4 py-3 font-medium text-gray-900">$29.00</td>
+                      <td className="px-4 py-3 font-medium text-gray-900">₹2,400.00</td>
                       <td className="px-4 py-3">
                         <span className="px-2 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium border border-green-100">Paid</span>
                       </td>
